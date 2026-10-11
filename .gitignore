@@ -1,0 +1,18 @@
+# Datos (no versionar: pesan cientos de MB). El cuaderno los descarga solo.
+data/
+*.tar.gz
+
+# Modelos entrenados
+models/*.keras
+models/*.h5
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
