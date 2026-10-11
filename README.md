@@ -4,7 +4,7 @@
 
 **Evaluación Parcial N°2 — TLY1102 Técnicas Avanzadas de Machine Learning I**
 **Sección:** 0001D
-**Integrantes:** Javier Garcia, Leandro Marin, Andres Zuñiga
+**Integrantes:** Javier Garcia
 
 Red Neuronal Convolucional (CNN) en Keras/TensorFlow que clasifica fotografías de paisajes y
 escenas urbanas en **6 categorías** (`buildings`, `forest`, `glacier`, `mountain`, `sea`,

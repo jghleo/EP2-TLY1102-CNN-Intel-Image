@@ -2,7 +2,7 @@
 
 **Evaluación Parcial N°2 — TLY1102 Técnicas Avanzadas de Machine Learning I**
 **Sección:** 0001D
-**Integrantes:** Javier Garcia, Leandro Marin, Andres Zuñiga
+**Integrantes:** Javier Garcia
 **Dataset:** Intel Image Classification (Kaggle)
 **Modelo principal:** Red Neuronal Convolucional (CNN) — Keras / TensorFlow
 **Modelo de comparación:** Perceptrón Multicapa (MLP) de la Evaluación Parcial N°1
