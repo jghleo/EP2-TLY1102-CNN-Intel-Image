@@ -86,9 +86,10 @@ pip install -r requirements.txt
 jupyter notebook notebooks/EP2_TLY1102_CNN_Intel_Image.ipynb
 ```
 
-> **Nota de entrega:** tras ejecutar el cuaderno en Colab, guarda el `.ipynb` **con las salidas**
-> (*Archivo → Descargar → .ipynb*) y copia la tabla impresa por la **celda final** en la sección de
-> resultados de `informe.md`.
+> **Nota de entrega:** el cuaderno se entrega **ya ejecutado**, con las salidas de Google Colab
+> (tablas, métricas y figuras). Si lo re-ejecutas, guarda el `.ipynb` con las salidas
+> (*Archivo → Descargar → .ipynb*); la **celda final** imprime una tabla Markdown lista para el
+> informe.
 
 ## Contenido del cuaderno
 
@@ -109,13 +110,22 @@ El cuaderno sigue la estructura de la pauta:
 
 ## Resultados
 
-Se completan al ejecutar el cuaderno (columna *CNN*). La EP1 reportó **47,7 %** de accuracy con el
-MLP sobre 800 imágenes/clase a 64 px.
+Ejecutado en **Google Colab (GPU Tesla T4)** con la variante del grupo (1.300 img/clase, 128 px,
+hasta 40 épocas con *Early Stopping*). La EP1 reportó **47,7 %** de accuracy con el MLP.
 
-| Modelo | Accuracy | F1 (weighted) | Parámetros | Tiempo (min) |
-|---|---|---|---|---|
-| MLP | _por completar_ | _por completar_ | _por completar_ | _por completar_ |
-| CNN | _por completar_ | _por completar_ | _por completar_ | _por completar_ |
+| Modelo | Accuracy | F1 (weighted) | Parámetros | Tiempo (min) | Épocas |
+|---|---|---|---|---|---|
+| MLP (comparación) | 0.3807 | 0.2809 | 12.616.838 | 3.3 | 37 |
+| **CNN (propuesta)** | **0.8270** | **0.8247** | **174.950** | 9.7 | 32 |
+
+La CNN **duplica con creces** la exactitud del MLP usando **~72× menos parámetros**.
+La clase más difícil es `mountain` (recall 0,64), confundida con `sea` y `glacier`.
+
+![Curvas CNN](images/curvas_cnn.png)
+
+![Matriz de confusión CNN](images/matriz_confusion_cnn.png)
+
+![Comparación MLP vs CNN](images/comparacion_mlp_cnn.png)
 
 ## Declaración de uso de IA
 

@@ -158,15 +158,55 @@ El entrenamiento registra pérdida y exactitud de entrenamiento y validación po
 **set de prueba independiente** se reportan *accuracy*, *precision*, *recall* y *F1* (ponderados y
 por clase), matriz de confusión y curvas ROC/AUC.
 
-> **Resultados:** se completan al ejecutar el cuaderno. Las figuras generadas son
-> `images/curvas_cnn.png`, `images/matriz_confusion_cnn.png`, `images/recall_por_clase.png` y
-> `images/roc_por_clase_cnn.png`. La **celda final** del cuaderno imprime una tabla Markdown lista
-> para pegar en esta sección.
+> **Entorno de ejecución:** Google Colab con GPU NVIDIA Tesla T4 (el cuaderno detecta la GPU
+> automáticamente). Ejecución completa sin errores.
+
+### 9.1 Resultado global
 
 | Modelo | Accuracy | F1 (weighted) | Parámetros | Tiempo (min) | Épocas |
 |---|---|---|---|---|---|
-| MLP | _por completar_ | _por completar_ | _por completar_ | _por completar_ | _por completar_ |
-| CNN | _por completar_ | _por completar_ | _por completar_ | _por completar_ | _por completar_ |
+| MLP (comparación) | 0.3807 | 0.2809 | 12.616.838 | 3.3 | 37 |
+| **CNN (propuesta)** | **0.8270** | **0.8247** | **174.950** | 9.7 | 32 |
+
+La CNN alcanza **82,7 % de accuracy** en el set de prueba: **+44,6 puntos** sobre el MLP
+reentrenado bajo condiciones idénticas (38,1 %) y **+35,0 puntos** sobre el 47,7 % reportado por el
+MLP en la EP1. Además lo logra con **~72 veces menos parámetros** (175 mil vs. 12,6 millones),
+confirmando la eficiencia de la compartición de pesos frente al aplanado del MLP.
+
+### 9.2 Curvas de aprendizaje (CNN)
+
+![Curvas de entrenamiento — CNN](images/curvas_cnn.png)
+
+La exactitud de validación crece de forma sostenida y la pérdida de validación se mantiene cercana
+a la de entrenamiento (**brecha train–val ≈ 0,05**), señal de que el modelo **generaliza** y no
+memoriza. El *Early Stopping* detuvo el entrenamiento en la **época 32** (de 40 máximas).
+
+### 9.3 Métricas por clase (CNN, set de test)
+
+| Clase | Precision | Recall | F1 | Soporte |
+|---|---|---|---|---|
+| buildings | 0.85 | 0.83 | 0.84 | 437 |
+| forest | 0.93 | **0.98** | 0.95 | 474 |
+| glacier | 0.80 | 0.77 | 0.79 | 553 |
+| mountain | 0.83 | **0.64** | 0.72 | 525 |
+| sea | 0.73 | 0.89 | 0.80 | 510 |
+| street | 0.85 | 0.87 | 0.86 | 501 |
+| **Macro avg** | 0.83 | 0.83 | 0.83 | 3000 |
+
+La clase más difícil es **`mountain`** (recall 0,64), que se confunde con `sea` y `glacier` por el
+parecido de color (roca/nieve), confirmando la hipótesis del EDA.
+
+### 9.4 Matriz de confusión y ROC/AUC
+
+![Matriz de confusión — CNN](images/matriz_confusion_cnn.png)
+
+![Recall por clase — CNN](images/recall_por_clase.png)
+
+![Curvas ROC por clase — CNN](images/roc_por_clase_cnn.png)
+
+La matriz de confusión y las curvas ROC (AUC mostrado por clase en la leyenda) confirman el
+patrón: `forest` (recall 0,98) y `sea` (0,89) se detectan bien, mientras que **`mountain`
+concentra los errores** (104 veces clasificada como `sea` y 78 como `glacier`).
 
 ## 10. Comparación MLP vs. CNN
 
@@ -178,14 +218,16 @@ convoluciones.
 
 **Análisis.**
 
-- **Desempeño:** la CNN supera al MLP porque aprovecha la estructura espacial; el MLP pierde la
-  relación entre píxeles vecinos (el mismo fenómeno que lo limitó al 47,7 % en la EP1).
-- **Parámetros:** el MLP tiene **más parámetros** (su primera capa densa domina) y aun así rinde
-  peor: son parámetros poco eficientes. La CNN logra más con menos gracias a la **compartición de
-  pesos** de los filtros.
-- **Tiempo:** la CNN es más costosa por época, pero suele converger en menos épocas.
-- **Generalización:** una brecha train–validación menor en la CNN indica que memoriza menos y
-  generaliza mejor.
+- **Desempeño:** la CNN **82,7 %** vs. el MLP **38,1 %** (mismas condiciones). La CNN aprovecha la
+  estructura espacial; el MLP pierde la relación entre píxeles vecinos (el mismo fenómeno que lo
+  limitó al 47,7 % en la EP1).
+- **Parámetros:** el MLP tiene **12,6 millones** de parámetros (su primera capa densa domina) y aun
+  así rinde peor: son parámetros poco eficientes. La CNN logra más con **175 mil** parámetros
+  (**~72× menos**) gracias a la **compartición de pesos** de los filtros.
+- **Tiempo:** la CNN es más costosa por época (32 épocas en 9,7 min) que el MLP (37 épocas en
+  3,3 min), pero entrega una exactitud más de **dos veces mayor**.
+- **Generalización:** la brecha train–validación de la CNN (+0,053) y del MLP (−0,056) es pequeña en
+  ambos; la diferencia de desempeño se explica por la **arquitectura**, no por sobreajuste.
 
 ## 11. Mapas de características y activaciones
 
@@ -213,8 +255,9 @@ que el MLP porque usa la **forma y disposición** de los elementos, no solo el c
 
 ## 13. Conclusiones y trabajo futuro
 
-1. **CNN vs. MLP:** la CNN obtiene una exactitud claramente superior a la del MLP de la EP1
-   (47,7 %), confirmando que **la estructura espacial importa**.
+1. **CNN vs. MLP:** la CNN obtiene **82,7 %** de exactitud, frente al **47,7 %** del MLP de la EP1
+   (y al 38,1 % del MLP reentrenado con la variante de esta entrega), confirmando que **la
+   estructura espacial importa**.
 2. **Ventajas de la CNN:** detección automática de características, invariancia a traslaciones y
    menor número de parámetros efectivos.
 3. **Limitaciones:** las clases de apariencia similar siguen confundiéndose; el dataset carece de
